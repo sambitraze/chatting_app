@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:buddychat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:core';
 
 final _firestore = Firestore.instance;
 FirebaseUser loggedInUser;
@@ -21,7 +22,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-
     getCurrentUser();
   }
 
@@ -76,7 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: () {
                       messageTextController.clear();
                       _firestore.collection('messages').add({
-                        'text': messageText,
+                        'message': messageText,
                         'sender': loggedInUser.email,
                       });
                     },
@@ -111,9 +111,8 @@ class MessagesStream extends StatelessWidget {
         final messages = snapshot.data.documents.reversed;
         List<MessageBubble> messageBubbles = [];
         for (var message in messages) {
-          final messageText = message.data['text'];
+          final messageText = message.data['message'];
           final messageSender = message.data['sender'];
-
           final currentUser = loggedInUser.email;
 
           final messageBubble = MessageBubble(
